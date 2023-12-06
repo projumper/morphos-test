@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programmierungs-Test</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #progress {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #counter {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #questionContent {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Programmierungs-Test</h1>
+    
+    <div id="progress"></div>
+    <div id="counter"></div>
+
+    <!-- Hier wird der Inhalt der Fragen dynamisch geladen -->
+    <div id="questionContent"></div>
+
+    <!-- Formular für die Antworten -->
+    <form>
+        <label for="answerA">A</label>
+        <input type="radio" id="answerA" name="answer" required>
+        
+        <label for="answerB">B</label>
+        <input type="radio" id="answerB" name="answer">
+        
+        <label for="answerC">C</label>
+        <input type="radio" id="answerC" name="answer">
+        
+        <label for="answerD">D</label>
+        <input type="radio" id="answerD" name="answer">
+
+        <button type="button" onclick="nextQuestion()">Nächste Frage</button>
+    </form>
+
+    <!-- Hier können Sie weitere benötigte Informationen im Formular hinzufügen -->
+
+    <script>
+        // JavaScript-Funktionen für die einzelnen Fragen
+        function question(index, text, options, correctAnswer) {
+            return function() {
+                alert(`Frage ${index + 1}: ${text}\n\nA) ${options[0]}\nB) ${options[1]}\nC) ${options[2]}\nD) ${options[3]}`);
+            }
+        }
+
+        // Array mit Fragen und zugehörigen JavaScript-Funktionen
+        const questions = [
+            { text: 'Was versteht man unter "Programmierung"?', options: ['Das Schreiben von Anweisungen für Computer', 'Die Planung von Veranstaltungen', 'Das Entwerfen von Logos', 'Das Organisieren von Treffen'], correctAnswer: 'A' },
+            { text: 'Welcher Begriff steht für die Struktur von Webseiten?', options: ['Hochsprache', 'Hightech-Design', 'Textformatierung', 'Hypertext'], correctAnswer: 'D' },
+            // ... (weitere Fragen hier einfügen)
+            { text: 'Was ist ein "Bug" in der Softwareentwicklung?', options: ['Fehler oder Defekt im Code', 'Kleines Insekt auf dem Bildschirm', 'Zufälliges Ereignis', 'Fehlerfreie Software'], correctAnswer: 'A' },
+            { text: 'Was ist das Ziel von Systemen wie Git?', options: ['Verwalten von Kochrezepten', 'Verfolgen von Änderungen im Quellcode und Zusammenarbeit im Team', 'Organisieren von Veranstaltungen', 'Aufzeichnen von Wetterdaten'], correctAnswer: 'B' },
+            // ... (weitere Fragen hier einfügen)
+        ];
+
+        // Fortschrittsanzeige und Counter
+        let currentQuestion = 0;
+
+        function updateProgress() {
+            const progressElement = document.getElementById('progress');
+            const counterElement = document.getElementById('counter');
+            const totalQuestions = questions.length;
+            const progressPercentage = ((currentQuestion + 1) / totalQuestions) * 100;
+
+            progressElement.textContent = `Fortschritt: ${progressPercentage.toFixed(2)}%`;
+            counterElement.textContent = `Verbleibende Fragen: ${totalQuestions - currentQuestion - 1}`;
+        }
+
+        // JavaScript-Funktion zum Laden der aktuellen Frage
+        function loadQuestion() {
+            const questionContainer = document.getElementById('questionContent');
+            const currentQuestionObj = questions[currentQuestion];
+
+            questionContainer.innerHTML = `<p>${currentQuestionObj.text}</p>`;
+            for (let i = 0; i < currentQuestionObj.options.length; i++) {
+                document.getElementById(`answer${String.fromCharCode(65 + i)}`).nextSibling.textContent = currentQuestionObj.options[i];
+            }
+        }
+
+        // JavaScript-Funktion für den Fortschritt zur nächsten Frage
+        function nextQuestion() {
+            // Überprüfen Sie hier die Antwort (nur ein einfaches Beispiel)
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+
+            if (selectedAnswer) {
+                const userAnswer = selectedAnswer.value;
+                const correctAnswer = questions[currentQuestion].correctAnswer;
+
+                if (userAnswer === correctAnswer) {
+                    // Die Antwort ist korrekt, fügen Sie hier bei Bedarf weitere Logik hinzu
+                    alert('Richtig!');
+                } else {
+                    // Die Antwort ist falsch, fügen Sie hier bei Bedarf weitere Logik hinzu
+                    alert('Falsch!');
+                }
+
+                if (currentQuestion < questions.length - 1) {
+                    currentQuestion++;
+                    updateProgress();
+                    loadQuestion();
+                    // Reset radio buttons
+                    document.querySelector('form').reset();
+                } else {
+                    // Der Test ist abgeschlossen, fügen Sie hier die Logik für die Auswertung und das Versenden der E-Mail hinzu.
+                    alert('Test abgeschlossen. Vielen Dank!');
+                }
+            } else {
+                alert('Bitte wählen Sie eine Antwort aus.');
+            }
+        }
+
+        // Beim Laden der Seite die erste Frage anzeigen
+        window.onload = function () {
+            // Weise jeder Frage ihre eigene Logik-Funktion zu
+            questions.forEach((q, index) => q.func = question(index, q.text, q.options, q.correctAnswer));
+            loadQuestion();
+            updateProgress();
+        };
+    </script>
+</body>
+</html>
